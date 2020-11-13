@@ -5,6 +5,8 @@ export const Wrapper = styled.div`
 	max-width: 300px;
 	min-height: 200px;
 	background-color: #fff;
+	border-radius: 4px;
+	overflow: hidden;
 `;
 
 export const ButtonsWrapper = styled.div`
