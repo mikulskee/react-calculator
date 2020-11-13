@@ -6,3 +6,11 @@ export const Wrapper = styled.div`
 	min-height: 200px;
 	background-color: #fff;
 `;
+
+export const ButtonsWrapper = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	align-content: stretch;
+`;

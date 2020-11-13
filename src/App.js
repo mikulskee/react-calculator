@@ -1,5 +1,5 @@
 import React from 'react';
-import Calculator from './components/Calculator/Calculator';
+import Calculator from './containers/Calculator/Calculator';
 import { GlobalStyle } from './style/GlobalStyle';
 
 const App = () => {
