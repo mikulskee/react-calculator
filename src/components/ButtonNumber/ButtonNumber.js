@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { ButtonNumberWrapper } from './ButtonNumber.Styles';
 
 const ButtonNumber = (props) => {
-	const { children, size, id } = props;
+	const { children, size, id, color } = props;
 	const [buttonWidth, setButtonWidth] = useState();
 
 	const getButtonWidth = useCallback(() => {
@@ -11,7 +11,7 @@ const ButtonNumber = (props) => {
 
 	useEffect(() => {
 		getButtonWidth();
-	}, []);
+	}, [getButtonWidth]);
 	useEffect(() => {
 		window.addEventListener('resize', getButtonWidth);
 
@@ -21,7 +21,7 @@ const ButtonNumber = (props) => {
 	}, [getButtonWidth]);
 
 	return (
-		<ButtonNumberWrapper size={size} id={id} buttonWidth={buttonWidth}>
+		<ButtonNumberWrapper size={size} id={id} buttonWidth={buttonWidth} color={color}>
 			{children}
 		</ButtonNumberWrapper>
 	);

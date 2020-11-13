@@ -105,12 +105,12 @@ export const buttonContentData = [
 		color: 'primary',
 		content: ',',
 		size: 'normal',
-		id: 17,
+		id: 18,
 	},
 	{
 		color: 'pink',
 		content: '=',
 		size: 'big',
-		id: 18,
+		id: 19,
 	},
 ];

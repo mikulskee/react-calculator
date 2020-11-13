@@ -9,7 +9,7 @@ const Calculator = () => {
 			<ButtonsWrapper>
 				{buttonContentData.map((item) => {
 					return (
-						<ButtonNumber size={item.size} id={item.content}>
+						<ButtonNumber key={item.id} size={item.size} id={item.content} color={item.color}>
 							{item.content}
 						</ButtonNumber>
 					);
