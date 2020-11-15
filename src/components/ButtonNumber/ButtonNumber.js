@@ -10,7 +10,6 @@ const ButtonNumber = (props) => {
 		updateValue,
 		setNumber,
 		number,
-		upperEquation,
 		setUpperEquation,
 		mainEquation,
 		setMainEquation,
@@ -37,7 +36,7 @@ const ButtonNumber = (props) => {
 	};
 
 	const isIdAnOperator = (id) => {
-		if (id === '+' || id === '-' || id === '*' || id === '/' || id === '.') {
+		if (id === '+' || id === '-' || id === '*' || id === '/' || id === '.' || id === '%') {
 			return true;
 		} else {
 			return false;
@@ -57,28 +56,33 @@ const ButtonNumber = (props) => {
 		}
 	};
 
-	const isIdAnOperatorWithoutComma = (id) => {
-		if (id === '+' || id === '-' || id === '*' || id === '/') {
-			return true;
-		} else {
-			return false;
-		}
-	};
-
 	const handleClick = (id) => {
 		switch (id) {
 			case '=':
 				if (!number) {
 					return;
+				} else if (!mainEquation.length) {
+					return;
 				} else if (isIdAnOperator(number.charAt(number.length - 2))) {
 					return;
+				} else if (number.indexOf('%')) {
+					let newMainEquation = [...mainEquation];
+					do {
+						const index = newMainEquation.indexOf('%');
+						newMainEquation = replaceValueInArray(newMainEquation, index, '*0.01');
+					} while (newMainEquation.indexOf('%') > -1);
+					setUpperEquation(newMainEquation.join('') + id);
+					let result = evaluate(newMainEquation.join(''));
+					result = Math.round((result + Number.EPSILON) * 1000000000) / 1000000000;
+					setNumber(result.toString());
+					setMainEquation([result.toString()]);
 				} else {
 					setUpperEquation(number + id);
-					const result = evaluate(number);
+					let result = evaluate(number);
+					result = Math.round((result + Number.EPSILON) * 1000000000) / 1000000000;
 					setNumber(result.toString());
 					setMainEquation([result.toString()]);
 				}
-
 				break;
 			case 'C':
 				setNumber('');
@@ -106,11 +110,9 @@ const ButtonNumber = (props) => {
 				} else {
 					updateValue(id);
 				}
-
 				break;
 
 			case '+/-':
-				let newMainEquation;
 				if (!number) {
 					setNumber('-');
 					setMainEquation(['-']);
@@ -124,7 +126,8 @@ const ButtonNumber = (props) => {
 					} else if (mainEquation[mainEquation.length - 2] === '-') {
 						if (
 							mainEquation[mainEquation.length - 3] === '*' ||
-							mainEquation[mainEquation.length - 3] === '/'
+							mainEquation[mainEquation.length - 3] === '/' ||
+							mainEquation[mainEquation.length - 3] === '%'
 						) {
 							const newMainEquation = [...mainEquation];
 							removeElementFromArray(newMainEquation, '-');
@@ -141,7 +144,8 @@ const ButtonNumber = (props) => {
 						}
 					} else if (
 						mainEquation[mainEquation.length - 2] === '*' ||
-						mainEquation[mainEquation.length - 2] === '/'
+						mainEquation[mainEquation.length - 2] === '/' ||
+						mainEquation[mainEquation.length - 3] === '%'
 					) {
 						if (mainEquation[mainEquation.length - 1] === '') {
 							if (mainEquation[mainEquation.length - 4] === '-') {
@@ -167,7 +171,8 @@ const ButtonNumber = (props) => {
 						} else {
 							if (
 								mainEquation[mainEquation.length - 2] === '*' ||
-								mainEquation[mainEquation.length - 2] === '/'
+								mainEquation[mainEquation.length - 2] === '/' ||
+								mainEquation[mainEquation.length - 3] === '%'
 							) {
 								const lastEl = mainEquation[mainEquation.length - 1];
 								const newMainEquation = replaceValueInArray(
@@ -182,14 +187,18 @@ const ButtonNumber = (props) => {
 						}
 					}
 				}
-
 				break;
 
 			default:
 				if (isIdAnOperator(id)) {
 					if (!mainEquation.length) {
 						if (number.length) {
-							updateValue(id);
+							if (id === '%') {
+								updateValue(id);
+								updateValue('*');
+							} else {
+								updateValue(id);
+							}
 						} else {
 							return;
 						}
@@ -198,10 +207,36 @@ const ButtonNumber = (props) => {
 						setMainEquation(newMainEquation);
 						setNumber(newMainEquation.join(' '));
 					} else {
-						updateValue(id);
+						if (id === '%') {
+							updateValue(id);
+							updateValue('*');
+						} else {
+							updateValue(id);
+						}
 					}
 				} else {
-					updateValue(id);
+					if (id === '0') {
+						if (!mainEquation.length) {
+							if (!number.length) {
+								updateValue(id);
+							} else {
+								if (number.indexOf('0') !== number.length - 1 || number.indexOf('.') > -1) {
+									updateValue(id);
+								} else return;
+							}
+						} else {
+							if (
+								mainEquation[mainEquation.length - 1].length === 0 ||
+								mainEquation[mainEquation.length - 1].indexOf('0') !==
+									mainEquation[mainEquation.length - 1].length - 1 ||
+								mainEquation[mainEquation.length - 1].indexOf('.') > -1
+							) {
+								updateValue(id);
+							} else return;
+						}
+					} else {
+						updateValue(id);
+					}
 				}
 		}
 	};
