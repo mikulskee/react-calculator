@@ -12,9 +12,6 @@ const Calculator = () => {
 		setNumber((prevState) => prevState + value);
 	};
 
-	useEffect(() => {
-		console.log(number);
-	}, [number]);
 	return (
 		<Wrapper>
 			<CalculatorScreen number={number} equation={equation} />

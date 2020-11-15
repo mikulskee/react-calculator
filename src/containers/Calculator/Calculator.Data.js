@@ -103,7 +103,7 @@ export const buttonContentData = [
 	},
 	{
 		color: 'primary',
-		content: ',',
+		content: '.',
 		size: 'normal',
 		id: 18,
 	},

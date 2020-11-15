@@ -34,26 +34,103 @@ const ButtonNumber = (props) => {
 		return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 	};
 
-	const handleClick = (id) => {
-		if (id === '=') {
-			console.log(number);
-
-			if (number.indexOf('x') > 0) {
-				const index = number.indexOf('x');
-				const newNumber = number.replaceAt(index, '*');
-				setEquation(number + id);
-				const result = eval(newNumber);
-				setNumber(result);
-			} else {
-				setEquation(number + id);
-				const result = eval(number);
-				setNumber(result);
-			}
-		} else if (id === 'C') {
-			setNumber('');
-			setEquation('');
+	const isIdAnOperator = (id) => {
+		if (id === '+' || id === '-' || id === 'x' || id === '/' || id === ',') {
+			return true;
 		} else {
-			updateValue(id);
+			return false;
+		}
+	};
+	const isIdAnOperatorWithoutComma = (id) => {
+		if (id === '+' || id === '-' || id === 'x' || id === '/') {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
+	const handleClick = (id) => {
+		switch (id) {
+			case '=':
+				if (!number) {
+					return;
+				} else if (isIdAnOperator(number.charAt(number.length - 1))) {
+					const newNumber = number.replaceAt(number.length - 1, ' ');
+					setEquation(newNumber);
+					const result = eval(newNumber);
+					setNumber(result.toString());
+				} else if (number.indexOf('x') > 0) {
+					const index = number.indexOf('x');
+					const newNumber = number.replaceAt(index, '*');
+					setEquation(number + id);
+					const result = eval(newNumber);
+					setNumber(result.toString());
+				} else {
+					setEquation(number + id);
+					const result = eval(number);
+					setNumber(result.toString());
+				}
+				break;
+			case 'C':
+				setNumber('');
+				setEquation('');
+				break;
+			case '.':
+				if (!number.length) {
+					return;
+				}
+				if (isIdAnOperator(number.charAt(number.length - 1))) {
+					return;
+				}
+				if (number.indexOf('.') > 0) {
+					if (
+						number.lastIndexOf('x') > number.lastIndexOf('.') ||
+						number.lastIndexOf('+') > number.lastIndexOf('.') ||
+						number.lastIndexOf('-') > number.lastIndexOf('.') ||
+						number.lastIndexOf('/') > number.lastIndexOf('.')
+					) {
+						updateValue(id);
+					} else {
+						return;
+					}
+				} else {
+					updateValue(id);
+				}
+				break;
+			case '+':
+				if (isIdAnOperator(number.charAt(number.length - 1))) {
+					return;
+				} else {
+					updateValue(id);
+				}
+				break;
+
+			case '-':
+				if (isIdAnOperator(number.charAt(number.length - 1))) {
+					return;
+				} else {
+					updateValue(id);
+				}
+				break;
+
+			case '/':
+				if (isIdAnOperator(number.charAt(number.length - 1))) {
+					return;
+				} else {
+					updateValue(id);
+				}
+				break;
+
+			case 'x':
+				if (isIdAnOperator(number.charAt(number.length - 1))) {
+					return;
+				} else {
+					updateValue(id);
+				}
+				break;
+
+			default:
+				updateValue(id);
 		}
 	};
 	return (
