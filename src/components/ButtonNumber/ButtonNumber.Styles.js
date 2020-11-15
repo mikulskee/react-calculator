@@ -10,7 +10,7 @@ export const ButtonNumberWrapper = styled.button`
 	background: linear-gradient(110deg, rgba(255, 255, 255, 1) 0%, rgba(244, 244, 244, 1) 100%);
 	color: ${({ color }) => (color === 'primary' ? 'black' : 'white')};
 	background: ${({ id }) => id === '/' && '#9156e2'};
-	background: ${({ id }) => id === 'x' && '#8d52de'};
+	background: ${({ id }) => id === '*' && '#8d52de'};
 	background: ${({ id }) => id === '-' && '#894eda'};
 	background: ${({ id }) => id === '+' && '#8547d6'};
 	background: ${({ id }) => id === '=' && '#e62f89'};

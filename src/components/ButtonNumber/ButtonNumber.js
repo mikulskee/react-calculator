@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ButtonNumberWrapper } from './ButtonNumber.Styles';
-
+import { evaluate } from 'mathjs';
 const ButtonNumber = (props) => {
 	const {
 		children,
@@ -37,7 +37,7 @@ const ButtonNumber = (props) => {
 	};
 
 	const isIdAnOperator = (id) => {
-		if (id === '+' || id === '-' || id === 'x' || id === '/' || id === '.') {
+		if (id === '+' || id === '-' || id === '*' || id === '/' || id === '.') {
 			return true;
 		} else {
 			return false;
@@ -56,8 +56,9 @@ const ButtonNumber = (props) => {
 			array.splice(index, 1);
 		}
 	};
+
 	const isIdAnOperatorWithoutComma = (id) => {
-		if (id === '+' || id === '-' || id === 'x' || id === '/') {
+		if (id === '+' || id === '-' || id === '*' || id === '/') {
 			return true;
 		} else {
 			return false;
@@ -69,22 +70,15 @@ const ButtonNumber = (props) => {
 			case '=':
 				if (!number) {
 					return;
-				} else if (isIdAnOperator(number.charAt(number.length - 1))) {
-					const newNumber = number.replaceAt(number.length - 1, ' ');
-					setUpperEquation(newNumber);
-					const result = eval(newNumber);
-					setNumber(result.toString());
-				} else if (number.indexOf('x') > 0) {
-					const index = number.indexOf('x');
-					const newNumber = number.replaceAt(index, '*');
-					setUpperEquation(number + id);
-					const result = eval(newNumber);
-					setNumber(result.toString());
+				} else if (isIdAnOperator(number.charAt(number.length - 2))) {
+					return;
 				} else {
 					setUpperEquation(number + id);
-					const result = eval(number);
+					const result = evaluate(number);
 					setNumber(result.toString());
+					setMainEquation([result.toString()]);
 				}
+
 				break;
 			case 'C':
 				setNumber('');
@@ -129,7 +123,7 @@ const ButtonNumber = (props) => {
 						setNumber(newMainEquation.join(' '));
 					} else if (mainEquation[mainEquation.length - 2] === '-') {
 						if (
-							mainEquation[mainEquation.length - 3] === 'x' ||
+							mainEquation[mainEquation.length - 3] === '*' ||
 							mainEquation[mainEquation.length - 3] === '/'
 						) {
 							const newMainEquation = [...mainEquation];
@@ -146,7 +140,7 @@ const ButtonNumber = (props) => {
 							setNumber(newMainEquation.join(' '));
 						}
 					} else if (
-						mainEquation[mainEquation.length - 2] === 'x' ||
+						mainEquation[mainEquation.length - 2] === '*' ||
 						mainEquation[mainEquation.length - 2] === '/'
 					) {
 						if (mainEquation[mainEquation.length - 1] === '') {
@@ -172,7 +166,7 @@ const ButtonNumber = (props) => {
 							}
 						} else {
 							if (
-								mainEquation[mainEquation.length - 2] === 'x' ||
+								mainEquation[mainEquation.length - 2] === '*' ||
 								mainEquation[mainEquation.length - 2] === '/'
 							) {
 								const lastEl = mainEquation[mainEquation.length - 1];

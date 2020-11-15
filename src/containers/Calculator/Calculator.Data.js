@@ -43,7 +43,7 @@ export const buttonContentData = [
 	},
 	{
 		color: 'secondary',
-		content: 'x',
+		content: '*',
 		size: 'normal',
 		id: 8,
 	},

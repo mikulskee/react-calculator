@@ -10,7 +10,7 @@ const Calculator = () => {
 	const [upperEquation, setUpperEquation] = useState('');
 
 	const updateValue = (value) => {
-		if (value === '+' || value === '-' || value === '/' || value === 'x') {
+		if (value === '+' || value === '-' || value === '/' || value === '*') {
 			setNumber((prevState) => prevState + ` ${value} `);
 		} else {
 			setNumber((prevState) => prevState + value);
@@ -21,7 +21,7 @@ const Calculator = () => {
 		if (
 			number.indexOf('+') > 0 ||
 			number.indexOf('-') > 0 ||
-			number.indexOf('x') > 0 ||
+			number.indexOf('*') > 0 ||
 			number.indexOf('/') > 0
 		) {
 			const array = number.split(' ');
