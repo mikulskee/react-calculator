@@ -10,8 +10,10 @@ const ButtonNumber = (props) => {
 		updateValue,
 		setNumber,
 		number,
-		equation,
-		setEquation,
+		upperEquation,
+		setUpperEquation,
+		mainEquation,
+		setMainEquation,
 	} = props;
 	const [buttonWidth, setButtonWidth] = useState();
 
@@ -35,10 +37,23 @@ const ButtonNumber = (props) => {
 	};
 
 	const isIdAnOperator = (id) => {
-		if (id === '+' || id === '-' || id === 'x' || id === '/' || id === ',') {
+		if (id === '+' || id === '-' || id === 'x' || id === '/' || id === '.') {
 			return true;
 		} else {
 			return false;
+		}
+	};
+
+	const replaceValueInArray = (array, index, value) => {
+		const ret = array.slice(0);
+		ret[index] = value;
+		return ret;
+	};
+
+	const removeElementFromArray = (array, elem) => {
+		const index = array.lastIndexOf(elem);
+		if (index > -1) {
+			array.splice(index, 1);
 		}
 	};
 	const isIdAnOperatorWithoutComma = (id) => {
@@ -56,81 +71,144 @@ const ButtonNumber = (props) => {
 					return;
 				} else if (isIdAnOperator(number.charAt(number.length - 1))) {
 					const newNumber = number.replaceAt(number.length - 1, ' ');
-					setEquation(newNumber);
+					setUpperEquation(newNumber);
 					const result = eval(newNumber);
 					setNumber(result.toString());
 				} else if (number.indexOf('x') > 0) {
 					const index = number.indexOf('x');
 					const newNumber = number.replaceAt(index, '*');
-					setEquation(number + id);
+					setUpperEquation(number + id);
 					const result = eval(newNumber);
 					setNumber(result.toString());
 				} else {
-					setEquation(number + id);
+					setUpperEquation(number + id);
 					const result = eval(number);
 					setNumber(result.toString());
 				}
 				break;
 			case 'C':
 				setNumber('');
-				setEquation('');
+				setUpperEquation('');
+				setMainEquation([]);
 				break;
 			case '.':
 				if (!number.length) {
 					return;
-				}
-				if (isIdAnOperator(number.charAt(number.length - 1))) {
-					return;
-				}
-				if (number.indexOf('.') > 0) {
-					if (
-						number.lastIndexOf('x') > number.lastIndexOf('.') ||
-						number.lastIndexOf('+') > number.lastIndexOf('.') ||
-						number.lastIndexOf('-') > number.lastIndexOf('.') ||
-						number.lastIndexOf('/') > number.lastIndexOf('.')
-					) {
-						updateValue(id);
+				} else if (number.indexOf(id) > -1) {
+					if (mainEquation.length > 1) {
+						if (isIdAnOperator(mainEquation[mainEquation.length - 2])) {
+							if (
+								mainEquation[mainEquation.length - 1].indexOf(id) > -1 ||
+								mainEquation[mainEquation.length - 1] === ''
+							) {
+								return;
+							} else {
+								updateValue(id);
+							}
+						}
 					} else {
 						return;
 					}
 				} else {
 					updateValue(id);
 				}
-				break;
-			case '+':
-				if (isIdAnOperator(number.charAt(number.length - 1))) {
-					return;
-				} else {
-					updateValue(id);
-				}
+
 				break;
 
-			case '-':
-				if (isIdAnOperator(number.charAt(number.length - 1))) {
-					return;
-				} else {
-					updateValue(id);
+			case '+/-':
+				let newMainEquation;
+				if (!number) {
+					setNumber('-');
+					setMainEquation(['-']);
 				}
-				break;
 
-			case '/':
-				if (isIdAnOperator(number.charAt(number.length - 1))) {
-					return;
-				} else {
-					updateValue(id);
+				if (mainEquation.length > 0) {
+					if (mainEquation[mainEquation.length - 2] === '+') {
+						const newMainEquation = replaceValueInArray(mainEquation, mainEquation.length - 2, '-');
+						setMainEquation(newMainEquation);
+						setNumber(newMainEquation.join(' '));
+					} else if (mainEquation[mainEquation.length - 2] === '-') {
+						if (
+							mainEquation[mainEquation.length - 3] === 'x' ||
+							mainEquation[mainEquation.length - 3] === '/'
+						) {
+							const newMainEquation = [...mainEquation];
+							removeElementFromArray(newMainEquation, '-');
+							setMainEquation(newMainEquation);
+							setNumber(newMainEquation.join(' '));
+						} else {
+							const newMainEquation = replaceValueInArray(
+								mainEquation,
+								mainEquation.length - 2,
+								'+'
+							);
+							setMainEquation(newMainEquation);
+							setNumber(newMainEquation.join(' '));
+						}
+					} else if (
+						mainEquation[mainEquation.length - 2] === 'x' ||
+						mainEquation[mainEquation.length - 2] === '/'
+					) {
+						if (mainEquation[mainEquation.length - 1] === '') {
+							if (mainEquation[mainEquation.length - 4] === '-') {
+								if (mainEquation.length - 4 === 0) {
+									const newMainEquation = mainEquation.slice(1, mainEquation.length);
+									setMainEquation(newMainEquation);
+									setNumber(newMainEquation.join(' '));
+								} else {
+									const newMainEquation = replaceValueInArray(
+										mainEquation,
+										mainEquation.length - 4,
+										'+'
+									);
+									setMainEquation(newMainEquation);
+									setNumber(newMainEquation.join(' '));
+								}
+							} else if (mainEquation[mainEquation.length - 4] === undefined) {
+								const newMainEquation = [...mainEquation];
+								newMainEquation.unshift('-');
+								setMainEquation(newMainEquation);
+								setNumber(newMainEquation.join(' '));
+							}
+						} else {
+							if (
+								mainEquation[mainEquation.length - 2] === 'x' ||
+								mainEquation[mainEquation.length - 2] === '/'
+							) {
+								const lastEl = mainEquation[mainEquation.length - 1];
+								const newMainEquation = replaceValueInArray(
+									mainEquation,
+									mainEquation.length - 1,
+									'-'
+								);
+								newMainEquation.push(lastEl);
+								setMainEquation(newMainEquation);
+								setNumber(newMainEquation.join(' '));
+							}
+						}
+					}
 				}
-				break;
 
-			case 'x':
-				if (isIdAnOperator(number.charAt(number.length - 1))) {
-					return;
-				} else {
-					updateValue(id);
-				}
 				break;
 
 			default:
-				updateValue(id);
+				if (isIdAnOperator(id)) {
+					if (!mainEquation.length) {
+						if (number.length) {
+							updateValue(id);
+						} else {
+							return;
+						}
+					} else if (mainEquation[mainEquation.length - 1] === '') {
+						const newMainEquation = replaceValueInArray(mainEquation, mainEquation.length - 2, id);
+						setMainEquation(newMainEquation);
+						setNumber(newMainEquation.join(' '));
+					} else {
+						updateValue(id);
+					}
+				} else {
+					updateValue(id);
+				}
 		}
 	};
 	return (

@@ -6,15 +6,33 @@ import CalculatorScreen from '../../components/CalculatorScreen/CalculatorScreen
 
 const Calculator = () => {
 	const [number, setNumber] = useState('');
-	const [equation, setEquation] = useState('');
+	const [mainEquation, setMainEquation] = useState([]);
+	const [upperEquation, setUpperEquation] = useState('');
 
 	const updateValue = (value) => {
-		setNumber((prevState) => prevState + value);
+		if (value === '+' || value === '-' || value === '/' || value === 'x') {
+			setNumber((prevState) => prevState + ` ${value} `);
+		} else {
+			setNumber((prevState) => prevState + value);
+		}
 	};
+
+	useEffect(() => {
+		if (
+			number.indexOf('+') > 0 ||
+			number.indexOf('-') > 0 ||
+			number.indexOf('x') > 0 ||
+			number.indexOf('/') > 0
+		) {
+			const array = number.split(' ');
+
+			setMainEquation(array);
+		}
+	}, [number]);
 
 	return (
 		<Wrapper>
-			<CalculatorScreen number={number} equation={equation} />
+			<CalculatorScreen number={number} upperEquation={upperEquation} />
 			<ButtonsWrapper>
 				{buttonContentData.map((item) => {
 					return (
@@ -26,8 +44,10 @@ const Calculator = () => {
 							updateValue={updateValue}
 							number={number}
 							setNumber={setNumber}
-							setEquation={setEquation}
-							equation={equation}
+							setUpperEquation={setUpperEquation}
+							upperEquation={upperEquation}
+							mainEquation={mainEquation}
+							setMainEquation={setMainEquation}
 						>
 							{item.content}
 						</ButtonNumber>

@@ -2,10 +2,10 @@ import React from 'react';
 import { CalculatorScreenWrapper, UpperWrapper, ResultWrapper } from './CalculatorScreen.Style';
 
 const CalculatorScreen = (props) => {
-	const { number, equation } = props;
+	const { number, upperEquation } = props;
 	return (
 		<CalculatorScreenWrapper>
-			<UpperWrapper>{equation}</UpperWrapper>
+			<UpperWrapper>{upperEquation}</UpperWrapper>
 			<ResultWrapper>{number}</ResultWrapper>
 		</CalculatorScreenWrapper>
 	);
