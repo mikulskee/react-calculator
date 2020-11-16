@@ -116,10 +116,25 @@ const ButtonNumber = (props) => {
 				if (!number) {
 					setNumber('-');
 					setMainEquation(['-']);
+				} else {
+					if (number.length === 1) {
+						setNumber('');
+						setMainEquation([]);
+					} else {
+						if (number.indexOf('-') === -1) {
+							setNumber(`- ${number}`);
+							setMainEquation(['-', number]);
+						}
+					}
 				}
 
 				if (mainEquation.length > 0) {
-					if (mainEquation[mainEquation.length - 2] === '+') {
+					if (mainEquation.length === 2) {
+						if (mainEquation[0] === '-') {
+							setNumber(mainEquation[1]);
+							setMainEquation([mainEquation[1]]);
+						}
+					} else if (mainEquation[mainEquation.length - 2] === '+') {
 						const newMainEquation = replaceValueInArray(mainEquation, mainEquation.length - 2, '-');
 						setMainEquation(newMainEquation);
 						setNumber(newMainEquation.join(' '));
